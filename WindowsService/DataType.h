@@ -65,38 +65,38 @@ namespace winsvc {
 		RunCommand = SC_ACTION_RUN_COMMAND
 	};
 
-	struct AccessRights {
-		AccessRights& withAllAccess() {
+	struct ManagerAccessRights {
+		ManagerAccessRights& withAllAccess() {
 			value |= SC_MANAGER_ALL_ACCESS;
 			return *this;
 		}
 
-		AccessRights& withCreateService() {
+		ManagerAccessRights& withCreateService() {
 			value |= SC_MANAGER_CREATE_SERVICE;
 			return *this;
 		}
 
-		AccessRights& withConnect() {
+		ManagerAccessRights& withConnect() {
 			value |= SC_MANAGER_CONNECT;
 			return *this;
 		}
 
-		AccessRights& withEnumServices() {
+		ManagerAccessRights& withEnumServices() {
 			value |= SC_MANAGER_ENUMERATE_SERVICE;
 			return *this;
 		}
 
-		AccessRights& withLockDb() {
+		ManagerAccessRights& withLockDb() {
 			value |= SC_MANAGER_LOCK;
 			return *this;
 		}
 
-		AccessRights& withModifyBootConfig() {
+		ManagerAccessRights& withModifyBootConfig() {
 			value |= SC_MANAGER_MODIFY_BOOT_CONFIG;
 			return *this;
 		}
 
-		AccessRights& withQueryLockStatus() {
+		ManagerAccessRights& withQueryLockStatus() {
 			value |= SC_MANAGER_QUERY_LOCK_STATUS;
 			return *this;
 		}
@@ -107,6 +107,151 @@ namespace winsvc {
 	private:
 		unsigned long value = 0;
 	};
+
+	struct ServiceAccessRights {
+		ServiceAccessRights& withAllAccess() {
+			value |= SERVICE_ALL_ACCESS;
+			return *this;
+		}
+
+		ServiceAccessRights& withChangeConfig() {
+			value |= SERVICE_CHANGE_CONFIG;
+			return *this;
+		}
+
+		ServiceAccessRights& withEnumerateDependents() {
+			value |= SERVICE_ENUMERATE_DEPENDENTS;
+			return *this;
+		}
+
+		ServiceAccessRights& withInterrogate() {
+			value |= SERVICE_INTERROGATE;
+			return *this;
+		}
+
+		ServiceAccessRights& withPauseAndContinue() {
+			value |= SERVICE_PAUSE_CONTINUE;
+			return *this;
+		}
+
+		ServiceAccessRights& withQueryConfig() {
+			value |= SERVICE_QUERY_CONFIG;
+			return *this;
+		}
+
+		ServiceAccessRights& withQueryStatus() {
+			value |= SERVICE_QUERY_STATUS;
+			return *this;
+		}
+
+		ServiceAccessRights& withStart() {
+			value |= SERVICE_START;
+			return *this;
+		}
+
+		ServiceAccessRights& withStop() {
+			value |= SERVICE_STOP;
+			return *this;
+		}
+
+		ServiceAccessRights& withUserDefinedControl() {
+			value |= SERVICE_USER_DEFINED_CONTROL;
+			return *this;
+		}
+
+		ServiceAccessRights& withSystemSecurityAccess() {
+			value |= ACCESS_SYSTEM_SECURITY;
+			return *this;
+		}
+
+		ServiceAccessRights& withDelete() {
+			value |= DELETE;
+			return *this;
+		}
+
+		ServiceAccessRights& withReadControl() {
+			value |= READ_CONTROL;
+			return *this;
+		}
+
+		ServiceAccessRights& withWriteDAC() {
+			value |= WRITE_DAC;
+			return *this;
+		}
+
+		ServiceAccessRights& withWriteOwner() {
+			value |= WRITE_OWNER;
+			return *this;
+		}
+		
+
+		bool hasAllAccess() const {
+			return value & SERVICE_ALL_ACCESS;
+		}
+
+		bool hasChangeConfig() const {
+			return value & SERVICE_CHANGE_CONFIG;
+		}
+
+		bool hasEnumerateDependents() const {
+			return value & SERVICE_ENUMERATE_DEPENDENTS;
+		}
+
+		bool hasInterrogate() const {
+			return value & SERVICE_INTERROGATE;
+		}
+
+		bool hasPauseAndContinue() const {
+			return value & SERVICE_PAUSE_CONTINUE;
+		}
+
+		bool hasQueryConfig() const {
+			return value & SERVICE_QUERY_CONFIG;
+		}
+
+		bool hasQueryStatus() const {
+			return value & SERVICE_QUERY_STATUS;
+		}
+
+		bool hasStart() const {
+			return value & SERVICE_START;
+		}
+
+		bool hasStop() const {
+			return value & SERVICE_STOP;
+		}
+
+		bool hasUserDefinedControl() const {
+			return value & SERVICE_USER_DEFINED_CONTROL;
+		}
+
+		bool hasSystemSecurityAccess() const {
+			return value & ACCESS_SYSTEM_SECURITY;
+		}
+
+		bool hasDelete() const {
+			return value & DELETE;
+		}
+
+		bool hasReadControl() const {
+			return value & READ_CONTROL;
+		}
+
+		bool hasWriteDAC() const {
+			return value & WRITE_DAC;
+		}
+
+		bool hasWriteOwner() const {
+			return value & WRITE_OWNER;
+		}
+
+		unsigned long getValue() {
+			return value;
+		}
+	private:
+		unsigned long value = 0;
+	};
+
 
 	struct FailureAction {
 		ActionType type;
@@ -205,27 +350,28 @@ namespace winsvc {
 			return *this;
 		}
 
-		bool acceptsNetbindChanges() {
+
+		bool acceptsNetbindChanges() const {
 			return value & SERVICE_ACCEPT_NETBINDCHANGE;
 		}
 
-		bool acceptsParameterChanges() {
+		bool acceptsParameterChanges() const {
 			return value & SERVICE_ACCEPT_PARAMCHANGE;
 		}
 
-		bool acceptsPausesAndContinues() {
+		bool acceptsPausesAndContinues() const {
 			return value & SERVICE_ACCEPT_PAUSE_CONTINUE;
 		}
 
-		bool acceptsPreshutdowns() {
+		bool acceptsPreshutdowns() const {
 			return value & SERVICE_ACCEPT_PRESHUTDOWN;
 		}
 
-		bool acceptsShutdowns() {
+		bool acceptsShutdowns() const {
 			return value & SERVICE_ACCEPT_SHUTDOWN;
 		}
 
-		bool acceptsStops() {
+		bool acceptsStops() const {
 			return value & SERVICE_ACCEPT_STOP;
 		}
 
@@ -259,27 +405,28 @@ namespace winsvc {
 			return *this;
 		}
 
-		bool acceptsHardwareProfileChanges() {
+
+		bool acceptsHardwareProfileChanges() const {
 			return value & SERVICE_ACCEPT_NETBINDCHANGE;
 		}
 
-		bool acceptsPowerEvents() {
+		bool acceptsPowerEvents() const {
 			return value & SERVICE_ACCEPT_POWEREVENT;
 		}
 
-		bool acceptsSessionStatusChanges() {
+		bool acceptsSessionStatusChanges() const {
 			return value & SERVICE_ACCEPT_SESSIONCHANGE;
 		}
 
-		bool acceptsTimeChanges() {
+		bool acceptsTimeChanges() const {
 			return value & SERVICE_ACCEPT_TIMECHANGE;
 		}
 
-		bool acceptsTriggerEvents() {
+		bool acceptsTriggerEvents() const {
 			return value & SERVICE_ACCEPT_TRIGGEREVENT;
 		}
 
-		bool acceptsReboots() {
+		bool acceptsReboots() const {
 			return value & SERVICE_ACCEPT_USER_LOGOFF;
 		}
 	};

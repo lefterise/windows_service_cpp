@@ -10,7 +10,7 @@
 
 namespace winsvc {
 	struct ServiceControlManager {
-		ServiceControlManager(std::wstring machineName, std::wstring databaseName, AccessRights desiredAccess)
+		ServiceControlManager(std::wstring machineName, std::wstring databaseName, ManagerAccessRights desiredAccess)
 			: controlManager(OpenSCManagerW(machineName.c_str(), databaseName.c_str(), desiredAccess.getValue()))
 		{
 			if (controlManager == nullptr) {
@@ -22,7 +22,7 @@ namespace winsvc {
 			}
 		}
 
-		ServiceControlManager(AccessRights desiredAccess)
+		ServiceControlManager(ManagerAccessRights desiredAccess)
 			: controlManager(OpenSCManagerW(nullptr, nullptr, desiredAccess.getValue()))
 		{
 			if (controlManager == nullptr) {
@@ -37,7 +37,7 @@ namespace winsvc {
 		Service createService(
 			std::wstring serviceName,
 			std::optional<std::wstring> displayName,
-			AccessRights desiredAccess,
+			ServiceAccessRights desiredAccess,
 			ServiceType serviceType,
 			StartType startType,
 			ErrorControl actionInCaseOfError,
@@ -90,7 +90,7 @@ namespace winsvc {
 			return Service(service, tagId);
 		}
 
-		Service openService(std::wstring serviceName, AccessRights desiredAccess) {
+		Service openService(std::wstring serviceName, ServiceAccessRights desiredAccess) {
 			SC_HANDLE service = OpenServiceW(
 				controlManager,
 				serviceName.c_str(),
