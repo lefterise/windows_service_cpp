@@ -323,6 +323,8 @@ namespace winsvc {
 	};
 
 	struct ControlsAccepted {
+		ControlsAccepted(int value = 0) : value(value) {}
+
 		ControlsAccepted& acceptNetbindChanges() {
 			value |= SERVICE_ACCEPT_NETBINDCHANGE;
 			return *this;
@@ -378,6 +380,8 @@ namespace winsvc {
 		int value;
 	};
 	struct ControlsAcceptedEx : ControlsAccepted {
+		ControlsAcceptedEx(int value = 0) : ControlsAccepted(value) {}
+
 		ControlsAccepted& acceptHardwareProfileChanges() {
 			value |= SERVICE_ACCEPT_HARDWAREPROFILECHANGE;
 			return *this;
@@ -439,6 +443,12 @@ namespace winsvc {
 		DWORD dwServiceSpecificExitCode;
 		DWORD dwCheckPoint;
 		DWORD dwWaitHint;
+	};
+
+	struct ServiceItem {
+		std::wstring keyName;
+		std::wstring displayName;
+		ServiceStatus status;
 	};
 
 	struct ServiceConfig {
