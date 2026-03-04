@@ -90,7 +90,7 @@ namespace winsvc {
 			return Service(service, tagId);
 		}
 
-		Service openService(std::wstring serviceName, ServiceAccessRights desiredAccess) {
+		std::optional<Service> openService(std::wstring serviceName, ServiceAccessRights desiredAccess) {
 			SC_HANDLE service = OpenServiceW(
 				controlManager,
 				serviceName.c_str(),
@@ -99,6 +99,11 @@ namespace winsvc {
 
 			if (service == nullptr) {
 				unsigned long error = GetLastError();
+				
+				if (error == ERROR_SERVICE_DOES_NOT_EXIST) {
+					return std::nullopt;
+				}
+
 				throw std::system_error(
 					std::error_code(static_cast<int>(error), std::system_category()),
 					"Unable to open service"
