@@ -210,13 +210,39 @@ namespace winsvc {
 			return fromServiceStatus(ss);
 		}
 
-		ServiceStatus controlServiceEx(ServiceControl control, DWORD infoLevel = SERVICE_CONTROL_STATUS_REASON_INFO, void* pControlParams = nullptr) {
-			SERVICE_STATUS_PROCESS ssp{};
-			BOOL ok = ControlServiceExW(service, (DWORD)control, infoLevel, pControlParams);
-			if (!ok)
-				throwLastError("Failed to control service (ex)");
+		ServiceStatus stop() {
+			return controlService(ServiceControl::stop);
+		}
 
-			return queryServiceStatus();
+		ServiceStatus stop(
+			StopReasonMajor major,
+			StopReasonMinor minor,
+			StopReasonFlag  flag,
+			std::wstring    comment
+		) {
+			SERVICE_CONTROL_STATUS_REASON_PARAMSW params{};
+			params.dwReason = (DWORD)flag | (DWORD)major | (DWORD)minor;
+			params.pszComment = comment.data();
+			params.ServiceStatus = {};
+
+			DWORD result = ControlServiceExW(
+				service,
+				SERVICE_CONTROL_STOP,
+				SERVICE_CONTROL_STATUS_REASON_INFO,
+				&params
+			);
+			if (result != NO_ERROR)
+				throwLastError("Failed to control service with reason");
+
+			return ServiceStatus {
+				.serviceType = (ServiceType)params.ServiceStatus.dwServiceType,
+				.currentState = (ServiceState)params.ServiceStatus.dwCurrentState,
+				.controlsAccepted = ControlsAcceptedEx(params.ServiceStatus.dwControlsAccepted),
+				.dwWin32ExitCode = params.ServiceStatus.dwWin32ExitCode,
+				.dwServiceSpecificExitCode = params.ServiceStatus.dwServiceSpecificExitCode,
+				.dwCheckPoint = params.ServiceStatus.dwCheckPoint,
+				.dwWaitHint = params.ServiceStatus.dwWaitHint
+			};
 		}
 
 		void setServiceObjectSecurity(SECURITY_INFORMATION securityInformation, PSECURITY_DESCRIPTOR pSecurityDescriptor) {
@@ -298,10 +324,6 @@ namespace winsvc {
 			BOOL ok = StartServiceW(service, static_cast<DWORD>(argv.size()), argv.empty() ? nullptr : argv.data());
 			if (!ok)
 				throwLastError("Failed to start service");
-		}
-
-		void stop() {
-			controlService(ServiceControl::stop);
 		}
 
 		ServiceConfig queryConfig() {
